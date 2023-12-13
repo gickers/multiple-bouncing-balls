@@ -2,29 +2,66 @@
 //It must be loaded from index.html
 //It assumes that the file "myPalettes.js" has also been loaded
 
-let currentPalette;
+let bouncingBalls = []
 
 function setup() {
-    createCanvas(windowWidth, windowHeight / 2);
-    currentPalette = randomPalette();
-    noStroke();
-    background("white");
+	createCanvas(windowWidth/2, windowHeight/2);
+for (let i=0; i < 10; i++){
+	let b = new bouncingBall(random(width),random(height),random(10,50),random(10),random(10));
+		bouncingBalls.push(b);
 }
+}
+	function mousePressed (){
+		for (let i = 0; i < bouncingBalls.length; i++) {
+    bouncingBalls[i].clicked(mouseX, mouseY);
+	}
+	}
+
+
 
 function draw() {
-    fill(random(currentPalette));
-    const x = random(0, width);
-    const y = random(0, height);
-    circle(x, y, 100);
+	background(0);
+	for (let i = 0; i < bouncingBalls.length; i++){
+		bouncingBalls[i].move();
+		bouncingBalls[i].show();
+	}
 }
 
-function mouseClicked() {
-    background(255);
-    currentPalette = randomPalette();
-}
+class bouncingBall {
+	constructor(x, y, r,xSpeed,ySpeed) {
+		this.x = x;
+		this.y = y;
+		this.r = r;
+		this.speedX = xSpeed
+		this.speedY = ySpeed
+		this.red = 0
+		this.g = 0
+		this.b = 0
+	}
 
-function keyPressed() {
-    if (key === "s") {
-        save("my-p5-screenshot");
-    }
+	move() {
+		this.x += this.speedX;
+		this.y += this.speedY;
+		if (this.x > width - this.r || this.x < this.r) {
+			this.speedX = -this.speedX
+			
+		}
+		if (this.y > height - this.r || this.y < this.r) {
+			this.speedY = -this.speedY;
+		}
+	}
+ clicked(positionX, positionY) {
+    let d = dist(positionX, positionY, this.x, this.y);
+    if (d < this.r) {
+      this.red = + random(255);
+			this.g = + random(255);
+			this.b = + random(255);
+		}
+ }
+	show() {
+		stroke(255);
+		strokeWeight(4);
+		fill(this.red,this.g,this.b);
+		ellipse(this.x, this.y, this.r * 2);
+	}
 }
